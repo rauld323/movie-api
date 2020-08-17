@@ -8,13 +8,17 @@ const fetchData = async (searchTerm) => {
             s: searchTerm
         }
     });
-
-    console.log(response.data)
+    //'Search' uses an uppercase Letter because thats how the API labels it.
+    return response.data.Search;
 };
 
 const input = document.querySelector('input');
+
+//This make sure that time passes before a the fetchData
+const onInput = async event => {
+        //What ever the user has changed in the input
+        const movies = await fetchData(event.target.value);
+        console.log(movies)
+};
 //The input event is triggered anytime a user changes the text inside the input 
-input.addEventListener('input', (event) =>{
-    //What ever the user has changed in the input
-    fetchData(event.target.value);
-})
+input.addEventListener('input', debounce(onInput, 500));
