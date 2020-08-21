@@ -1,7 +1,7 @@
-const createAutoComplete = ({root, renderOption}) => {
+const createAutoComplete = ({root, renderOption, onOptionSelect, inputValue, fetchData}) => {
     //autocomplete widget
     root.innerHTML = `
-        <label><b>Search For a Movie</b></lable>
+        <label><b>Search</b></lable>
         <input class="input" />
         <div class="dropdown">
             <div class="dropdown-menu">
@@ -17,10 +17,10 @@ const createAutoComplete = ({root, renderOption}) => {
     //This make sure that time passes before a the fetchData
     const onInput = async event => {
         //What ever the user has changed in the input
-        const movies = await fetchData(event.target.value);
+        const items = await fetchData(event.target.value);
 
         //Function ensures that everything clears up if nothing is added.
-        if (!movies.length) {
+        if (!items.length) {
             dropdown.classList.remove('is-active');
             return;
         }
@@ -31,18 +31,18 @@ const createAutoComplete = ({root, renderOption}) => {
         //this will activitated as soon as the data has been fetched successfuly 
         dropdown.classList.add('is-active');
         //This loop allows for all the movie posters to apper
-        for (let movie of movies) {
+        for (let item of items) {
             const option = document.createElement('a');
             //Checks for results that return with a N/A
 
             option.classList.add('dropdown-item');
-            option.innerHTML = renderOption(movie);
+            option.innerHTML = renderOption(item);
             //Closes dropdown once a movie is chosen
             option.addEventListener('click', () => {
                 dropdown.classList.remove('is-active');
                 //Returns title to the input section
-                input.value = movie.Title;
-                onMovieSelect(movie);
+                input.value = inputValue(item);
+                onOptionSelect(item);
             })
 
             resultsWrapper.appendChild(option);
