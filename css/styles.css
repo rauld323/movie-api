@@ -8,3 +8,8 @@
   height: 50px;
   margin-right: 10px;
 }
+.tutorial {
+  width: 600px;
+  text-align: center;
+  margin: auto;
+}
