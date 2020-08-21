@@ -1,37 +1,47 @@
-//Make a network request with axios
-const fetchData = async (searchTerm) => {
-    //"await" is waiting to get the response from the url
-    const response = await axios.get('http://www.omdbapi.com/', {
-        //params object was created to append things to the url
-        params: {
-            apikey: '6a3dec8a',
-            s: searchTerm
-        }
-    });
-
-    //If search is mispelled it will not try to fetch information
-    if(response.data.Error){
-        return[];
-    }
-
-    //'Search' uses an uppercase Letter because thats how the API labels it.
-    return response.data.Search;
-};
-
-createAutoComplete({
-    root: document.querySelector('.autocomplete'),
-    renderOption (movie) {
+const autoCompleteConfig ={
+    renderOption(movie) {
         const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
         return `
                 <img src="${imgSrc}" /> 
                 ${movie.Title} (${movie.Year})
             `;
     },
-    onOptionSelect(movie){
+    onOptionSelect(movie) {
+        document.querySelector('.tutorial').classList.add('is-hidden')
         onMovieSelect(movie);
-    }
-});
+    },
+    inputValue(movie) {
+        return movie.Title;
+    },
+    async fetchData(searchTerm) {
+        //"await" is waiting to get the response from the url
+        const response = await axios.get('http://www.omdbapi.com/', {
+            //params object was created to append things to the url
+            params: {
+                apikey: '6a3dec8a',
+                s: searchTerm
+            }
+        });
 
+        //If search is mispelled it will not try to fetch information
+        if (response.data.Error) {
+            return [];
+        }
+
+        //'Search' uses an uppercase Letter because thats how the API labels it.
+        return response.data.Search;
+    }
+}
+
+//controls how each option is rendered
+createAutoComplete({
+    ...autoCompleteConfig,
+    root: document.querySelector('#left-autocomplete')
+});
+createAutoComplete({
+    ...autoCompleteConfig,
+    root: document.querySelector('#right-autocomplete')
+});
 
 const onMovieSelect = async movie => {
     const response = await axios.get('http://www.omdbapi.com/', {
